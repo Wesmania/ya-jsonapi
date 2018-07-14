@@ -1,0 +1,13 @@
+*.mo
+*~
+*.pyc
+*.pyo
+*.egg-info
+.idea/
+.DS_Store
+.coverage*
+__pycache__
+dist
+/.cache/
+*.swp
+/build/
