@@ -20,8 +20,5 @@ setup(
     packages=find_packages("src"),
     include_package_data=True,
     zip_safe=False,
-    install_requires=[
-        "requests",
-        "aiohttp",
-    ],
+    install_requires=[],
 )

@@ -1,5 +1,3 @@
-requests
-aiohttp
 pytest
 pytest-mock
 pytest-cov
