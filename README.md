@@ -1,10 +1,35 @@
-Absolute basics
-===============
+ya\_jsonapi
+===========
 
-1. Parsing json responses. Translating them into exactly corresponding entities
-   - Document, (resource) Object, Relationship etc. Wherever the spec has
-   arbitrary dicts, we should use dict access only, attribute acces would be
-   incomplete and unnecessary.
+`ya_jsonapi` is yet another implementation of jsonapi client for Python. I
+started writing this library as I wanted to have a library that supports asyncio
+and gives explicit control over performed http requests, and writing one from
+scratch appears to be easier than than modifying any of the existing ones.
+
+Design goals
+============
+* Decoupling from the fetch process. Only generate links and process received
+  data, actual data fetching (any any exception handling) should be implemented
+  by the user. `requests` or `aiohttp` implementations should be trivial.
+* Explicit control over requests. No implicit ORM, explicit fetching and
+  posting data. Convenience tools for ORM-like traversal of fetched data.
+* Access to keyed attributes via dicts, no \_\_getattr\_\_ magic, to keep things
+  simple and unambiguous.
+
+Roadmap
+=======
+
+No target dates. Hopefully won't run out of motivation before the library is at
+least partially complete.
+
+Absolute basics
+---------------
+
+1. (__DONE__) Parsing json responses. Translating them into exactly
+   corresponding entities - Document, (resource) Object, Relationship etc.
+   Wherever the spec has arbitrary dicts, we should use dict access only,
+   attribute acces would be incomplete and unnecessary.
+   
    Validate jsonapi with its jsonspec first, then turn it into a Document
    object with attributes forming a tree analogous to the response.
 
@@ -16,7 +41,7 @@ Absolute basics
 
 
 First improvements
-==================
+------------------
 
 3. Introduce Context class. Context is a collection of jsonapi Objects, it's
    used to keep results of multiple related queries together. All objects from
@@ -30,7 +55,7 @@ First improvements
    to).
 
 More improvments
-================
+----------------
 
 5. Allow specifying a Getter class for the Context. The class is used by Context
    to fetch data through a get method, however it sees fit and with whatever
@@ -47,11 +72,11 @@ More improvments
    'previous' link that you can use to fetch appropriate documents (and perhaps
    also analogous pages inside them? Seems non-trivial).
 
-7. Async calls. Add async_get to context getter, give functions that use the
+7. Async calls. Add async\_get to context getter, give functions that use the
    getter async versions (perhaps via a parameter on the Context?)
 
 Even more improvements
-======================
+----------------------
 
 8. Type checking support. Allow to define types of objects, with allowed names
    of fields and relations. Give a different error if trying to access a field
