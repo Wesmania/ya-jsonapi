@@ -80,3 +80,47 @@ def test_document_from_json_data_values():
     doc = jdata.Document.from_json(data)
     assert isinstance(doc.data[0], MockJsonResourceObject)
     assert [i.id_data for i in doc.data] == [{"a": 1}, {"a": 2}]
+
+
+def error_mock(fn):
+    fn = mock.patch('ya_jsonapi.data.error.Link', MockJsonObject)(fn)
+    return fn
+
+
+@error_mock
+def test_error_from_json():
+    data = {
+        "id": 1,
+        "links": {"a": 1},
+        "status": "200",
+        "code": "555",
+        "title": "foo",
+        "detail": "bar",
+        "source": {"a": 2},
+        "meta": 2,
+    }
+    err = jdata.Error.from_json(data)
+
+    assert err.id == 1
+    assert err.links["a"].data == 1
+    assert err.status == "200"
+    assert err.code == "555"
+    assert err.title == "foo"
+    assert err.detail == "bar"
+    assert err.source == {"a": 2}
+    assert err.meta == 2
+
+
+@error_mock
+def test_error_from_json_no_data():
+    data = {}
+    err = jdata.Error.from_json(data)
+
+    assert err.id is None
+    assert err.links == {}
+    assert err.status is None
+    assert err.code is None
+    assert err.title is None
+    assert err.detail is None
+    assert err.source is None
+    assert err.meta is None
