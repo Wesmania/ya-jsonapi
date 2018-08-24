@@ -9,7 +9,10 @@ class Link(JsonObject):
 
     @classmethod
     def from_json(cls, data):
-        return cls()    # TODO
-
-    def to_json(self):
-        pass    # TODO
+        self = cls()
+        if isinstance(data, str):
+            self.href = data
+        else:
+            self.href = data.get("href", None)
+            self.meta = data.get("meta", None)
+        return self

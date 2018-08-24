@@ -10,7 +10,8 @@ class ResourceIdentifier(JsonObject):
 
     @classmethod
     def from_json(cls, data):
-        return cls()    # TODO
-
-    def to_json(self):
-        pass    # TODO
+        self = cls()
+        self.id = data["id"]
+        self.type = data["type"]
+        self.meta = data.get("meta", None)
+        return self
