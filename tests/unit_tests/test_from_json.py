@@ -1,5 +1,7 @@
 import mock
+import pytest
 from ya_jsonapi import data as jdata
+from jsonschema import ValidationError
 
 
 class MockJsonObject:
@@ -80,6 +82,12 @@ def test_document_from_json_data_values():
     doc = jdata.Document.from_json(data)
     assert isinstance(doc.data[0], MockJsonResourceObject)
     assert [i.id_data for i in doc.data] == [{"a": 1}, {"a": 2}]
+
+
+@document_mock
+def test_document_from_invalid_response():
+    with pytest.raises(ValidationError):
+        jdata.Document.from_response({})
 
 
 def error_mock(fn):
