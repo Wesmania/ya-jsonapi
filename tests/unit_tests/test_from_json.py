@@ -222,3 +222,73 @@ def test_relationship_from_json_data_values():
     data["data"] = [{"a": 1}, {"a": 2}]
     rel = jdata.Relationship.from_json(data)
     assert [i.data for i in rel.data] == [{"a": 1}, {"a": 2}]
+
+
+
+def resource_mock(fn):
+    for classes in ['Relationship', 'ResourceIdentifier', 'Link']:
+        fn = mock.patch('ya_jsonapi.data.resource.' + classes, MockJsonObject)(fn)
+    return fn
+
+
+@resource_mock
+def test_resource_from_json():
+    data = {
+        "id": "1",
+        "type": "t",
+        "attributes": {"a": 1},
+        "relationships": {"b": 2},
+        "links": {"a": 1},
+        "meta": 1
+    }
+    res = jdata.Resource.from_json(data)
+
+    assert res.id == "1"
+    assert res.type == "t"
+    assert res.links["a"].data == 1
+    assert res.attributes["a"] == 1
+    assert res.relationships["b"].data == 2
+    assert res.meta == 1
+
+
+@resource_mock
+def test_resource_from_json_no_data():
+    data = {
+        "id": "1",
+        "type": "t",
+    }
+    res = jdata.Resource.from_json(data)
+
+    assert res.id == "1"
+    assert res.type == "t"
+    assert res.links == {}
+    assert res.attributes == {}
+    assert res.relationships == {}
+    assert res.meta is None
+
+
+@resource_mock
+def test_resource_self_or_id_from_json():
+    data = {
+        "id": "1",
+        "type": "t",
+        "meta": 2,
+    }
+    res = jdata.Resource.self_or_id_from_json(data)
+    # res should be a (mocked) ResourceIdentifier
+    assert isinstance(res, MockJsonObject)
+
+    data["attributes"] = {"a": 1}
+    res = jdata.Resource.self_or_id_from_json(data)
+    assert isinstance(res, jdata.Resource)
+    del data["attributes"]
+
+    data["relationships"] = {"a": 1}
+    res = jdata.Resource.self_or_id_from_json(data)
+    assert isinstance(res, jdata.Resource)
+    del data["relationships"]
+
+    data["links"] = {"a": 1}
+    res = jdata.Resource.self_or_id_from_json(data)
+    assert isinstance(res, jdata.Resource)
+    del data["links"]
