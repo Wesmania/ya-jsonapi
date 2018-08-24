@@ -124,3 +124,22 @@ def test_error_from_json_no_data():
     assert err.detail is None
     assert err.source is None
     assert err.meta is None
+
+
+def test_jsonapi_from_json():
+    data = {
+        "version": "1",
+        "meta": 2,
+    }
+    ver = jdata.Jsonapi.from_json(data)
+
+    assert ver.version == "1"
+    assert ver.meta == 2
+
+
+def test_jsonapi_from_json_no_data():
+    data = {}
+    ver = jdata.Jsonapi.from_json(data)
+
+    assert ver.version is None
+    assert ver.meta is None
