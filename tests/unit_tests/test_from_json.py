@@ -292,3 +292,26 @@ def test_resource_self_or_id_from_json():
     res = jdata.Resource.self_or_id_from_json(data)
     assert isinstance(res, jdata.Resource)
     del data["links"]
+
+
+def test_resource_identifier_from_json():
+    data = {
+        "id": "1",
+        "type": "t",
+        "meta": 2,
+    }
+    res = jdata.ResourceIdentifier.from_json(data)
+    assert res.id == "1"
+    assert res.type == "t"
+    assert res.meta == 2
+
+
+def test_resource_identifier_from_json_no_data():
+    data = {
+        "id": "1",
+        "type": "t",
+    }
+    res = jdata.ResourceIdentifier.from_json(data)
+    assert res.id == "1"
+    assert res.type == "t"
+    assert res.meta is None
