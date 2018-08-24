@@ -140,6 +140,28 @@ def test_jsonapi_from_json():
 def test_jsonapi_from_json_no_data():
     data = {}
     ver = jdata.Jsonapi.from_json(data)
-
     assert ver.version is None
     assert ver.meta is None
+
+
+def test_link_from_json():
+    data = {
+        "href": "link stuff",
+        "meta": 1
+    }
+    link = jdata.Link.from_json(data)
+    assert link.href == "link stuff"
+    assert link.meta == 1
+
+
+def test_link_from_json_no_data():
+    data = {}
+    link = jdata.Link.from_json(data)
+    assert link.href is None
+    assert link.meta is None
+
+
+def test_link_from_json_string():
+    link = jdata.Link.from_json("link stuff")
+    assert link.href == "link stuff"
+    assert link.meta is None
