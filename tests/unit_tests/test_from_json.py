@@ -165,3 +165,60 @@ def test_link_from_json_string():
     link = jdata.Link.from_json("link stuff")
     assert link.href == "link stuff"
     assert link.meta is None
+
+
+def relationship_mock(fn):
+    for classes in ['Link', 'ResourceIdentifier']:
+        fn = mock.patch('ya_jsonapi.data.relationship.' + classes, MockJsonObject)(fn)
+    return fn
+
+
+@relationship_mock
+def test_relationship_from_json():
+    data = {
+        "links": {"a": 1},
+        "data": {"a": 1},
+        "meta": 1
+    }
+    rel = jdata.Relationship.from_json(data)
+
+    assert rel.links["a"].data == 1
+    assert rel.data.data == {"a": 1}
+    assert rel.meta == 1
+
+
+@relationship_mock
+def test_relationship_from_json_only_data():
+    data = {
+        "data": {"a": 1},
+    }
+    rel = jdata.Relationship.from_json(data)
+
+    assert rel.links == {}
+    assert rel.data.data == {"a": 1}
+    assert rel.meta is None
+
+
+@relationship_mock
+def test_relationship_from_json_data_values():
+    data = {
+        "links": {"a": 1},
+    }
+    rel = jdata.Relationship.from_json(data)
+    assert rel.data is jdata.MISSING
+
+    data["data"] = None
+    rel = jdata.Relationship.from_json(data)
+    assert rel.data is None
+
+    data["data"] = {"a": 1}
+    rel = jdata.Relationship.from_json(data)
+    assert rel.data.data == {"a": 1}
+
+    data["data"] = []
+    rel = jdata.Relationship.from_json(data)
+    assert rel.data == []
+
+    data["data"] = [{"a": 1}, {"a": 2}]
+    rel = jdata.Relationship.from_json(data)
+    assert [i.data for i in rel.data] == [{"a": 1}, {"a": 2}]
